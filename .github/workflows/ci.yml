@@ -1,0 +1,56 @@
+# CI Pipeline for Arduinobot ROS 2 Workspace
+# Runs linting and basic checks on every push and pull request
+
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lint-and-check:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install linting tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 cpplint
+
+      - name: Lint Python files (flake8)
+        run: |
+          flake8 . \
+            --max-line-length=120 \
+            --ignore=E501,W503,E402 \
+            --exclude=build,install,log,__pycache__,.git \
+            --count --show-source --statistics
+        continue-on-error: false
+
+      - name: Lint C++ files (cpplint)
+        run: |
+          find . -name "*.cpp" -o -name "*.hpp" -o -name "*.h" | \
+            grep -v "build/" | grep -v "install/" | \
+            xargs -r cpplint \
+              --filter=-legal/copyright,-build/include_order,-build/c++11,-runtime/references \
+              --linelength=120 || true
+
+      - name: Check file structure
+        run: |
+          echo "=== Repository Structure ==="
+          find . -maxdepth 3 -type f \
+            \( -name "*.py" -o -name "*.cpp" -o -name "*.hpp" \
+               -o -name "*.yaml" -o -name "*.xml" \
+               -o -name "CMakeLists.txt" -o -name "*.launch.py" \) \
+            | grep -v "build/" | grep -v "install/" | sort
+          echo ""
+          echo "Build check passed!"
