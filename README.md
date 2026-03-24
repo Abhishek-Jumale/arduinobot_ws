@@ -1,94 +1,132 @@
-# arduinobot_ws
-🤖 3-DOF Robotic Manipulator Simulation using ROS 2 Humble
-This project demonstrates the simulation of a 3-DOF robotic manipulator using the Robot Operating System 2 (ROS 2) Humble framework.
-It integrates multiple key ROS 2 tools and libraries to provide a realistic representation of robotic motion, control, and sensor feedback — both visually and physically — in simulation.
+# Arduinobot — ROS 2 Manipulator Simulation & Voice Control
 
-🧩 Simulation Overview
+![CI](https://github.com/Abhishek-Jumale/arduinobot_ws/actions/workflows/ci.yml/badge.svg)
+![ROS 2](https://img.shields.io/badge/ROS_2-Humble-blue)
+![Gazebo](https://img.shields.io/badge/Gazebo-Classic-orange)
+![MoveIt 2](https://img.shields.io/badge/MoveIt_2-Enabled-green)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-The simulation environment combines the following core components:
+A 3-DOF robotic manipulator simulation built with ROS 2 Humble, featuring MoveIt 2 motion planning, Gazebo physics simulation, and Amazon Alexa voice control for pick-and-place automation.
 
-🧱 RViz 2 – For 3D visualization of the manipulator’s structure, joint movements, and coordinate frames.
+---
 
-🌍 Gazebo Classic – Acts as the physics engine simulating realistic motion, gravity, and environment interaction.
+## Architecture
 
-📐 URDF (Unified Robot Description Format) – Defines the robot’s geometry, kinematic structure, and joint configuration.
+```
+                    ┌──────────────────┐
+                    │   Alexa Voice    │
+                    │    Commands      │
+                    └────────┬─────────┘
+                             │
+                             ▼
+┌──────────┐    ┌──────────────────────┐    ┌──────────────┐
+│  RViz 2  │◄───│   ROS 2 Humble       │───►│   Gazebo     │
+│  (Viz)   │    │                      │    │  (Physics)   │
+└──────────┘    │  ┌────────────────┐  │    └──────────────┘
+                │  │  MoveIt 2      │  │
+                │  │  (Planning)    │  │    ┌──────────────┐
+                │  └────────────────┘  │───►│   Arduino    │
+                │  ┌────────────────┐  │    │  (Hardware)  │
+                │  │  ros2_control  │  │    └──────────────┘
+                │  │  (Controllers) │  │
+                │  └────────────────┘  │
+                │  ┌────────────────┐  │
+                │  │  TF2           │  │
+                │  │  (Transforms)  │  │
+                │  └────────────────┘  │
+                └──────────────────────┘
+```
 
-⚙️ ROS 2 Control – Manages and configures the controllers that actuate the robot’s joints.
+## Key Features
 
-🧭 TF2 – Maintains and transforms coordinate frames between robot parts for consistent spatial awareness.
+- **3-DOF Robotic Arm** — URDF-modeled manipulator with accurate kinematics and collision geometry
+- **MoveIt 2 Motion Planning** — Collision-free trajectory generation and execution
+- **Gazebo Physics Simulation** — Realistic gravity, inertia, and contact dynamics
+- **RViz 2 Visualization** — Real-time display of joint states, TF frames, and planned paths
+- **ros2_control Integration** — Position controllers with joint state feedback
+- **Alexa Voice Control** — Remote pick-and-place commands via Amazon Alexa
+- **Dual Language** — Custom ROS 2 action interfaces implemented in both Python and C++
+- **Hardware Bridge** — Arduino serial communication for real robot actuation
+- **CI/CD Pipeline** — GitHub Actions with flake8 and cpplint on every push
 
-🦾 MoveIt 2 – Provides motion planning, trajectory execution, and collision-free path generation.
+## Package Structure
 
-Together, these modules create a complete simulation pipeline where the manipulator’s behavior can be visualized in RViz and physically simulated in Gazebo, demonstrating how robotic systems are modeled, controlled, and visualized in ROS 2.
+```
+arduinobot_ws/
+├── arduinobot_bringup         # Launch files for simulation and real robot
+├── arduinobot_controller      # ros2_control config and hardware interface
+├── arduinobot_description     # URDF, meshes, and Gazebo world files
+├── arduinobot_moveit          # MoveIt 2 configuration and launch files
+├── arduinobot_msgs            # Custom ROS 2 message/action definitions
+├── arduinobot_remote          # Alexa voice control integration
+├── arduinobot_firmware        # Arduino firmware for motor actuation
+├── arduinobot_cpp_examples    # C++ ROS 2 node examples
+├── arduinobot_py_examples     # Python ROS 2 node examples
+└── arduinobot_utils           # Utility scripts and helpers
+```
 
-🔑 Key Features
+## Prerequisites
 
-🦾 3-DOF Robotic Arm – Modeled in URDF for accurate mechanical structure and motion.
+- Ubuntu 22.04 LTS
+- ROS 2 Humble
+- Gazebo Classic
+- MoveIt 2
 
-🔄 Full ROS 2 Integration – Developed using nodes, launch files, and controller configurations.
+## Installation
 
-🌐 Physics-Based Simulation – Realistic motion using Gazebo’s physics engine (gravity, inertia, and collisions).
-
-👀 Visualization with RViz 2 – Displays real-time link motion, joint states, and TF frames.
-
-🎮 Controller Configuration – Implemented with ros2_control and ros2_controllers for position and state feedback.
-
-🧭 TF2 Transform Tree – Ensures accurate spatial relationships among robot links.
-
-🚀 MoveIt 2 Integration – Enables motion planning and execution of precise trajectories.
-
-📦 Package Structure
-
-🚀 arduinobot_bringup: Contains launch files that start all functionalities of the real or simulated robot.
-
-🎮 arduinobot_controller: Contains the ROS 2 Control configuration and hardware interface with the real robot.
-
-📎 arduinobot_cpp_examples: Provides ROS 2 templates and examples for C++ development.
-
-📒 arduinobot_description: Contains the URDF description, meshes, and Gazebo simulation setup.
-
-🔋 arduinobot_firmware: Includes Arduino firmware for actuating the motors of the real robot.
-
-🧠 arduinobot_moveit: Holds the MoveIt 2 configuration and launch files for motion planning.
-
-📧 arduinobot_msgs: Defines new ROS 2 custom message interfaces.
-
-🧩 arduinobot_py_examples: Provides ROS 2 templates and examples for Python development.
-
-🗣️ arduinobot_remote: Enables remote control of the robot using Amazon Alexa voice commands.
-
-⚒️ arduinobot_utils: Contains utility tools and helper scripts for setup and maintenance.
-
-🧰 Setup & Installation
-1. Prerequisites
-
-Ensure the following software is installed:
-
-🐧 Ubuntu 22.04 LTS
-
-🦋 ROS 2 Humble
-
-🌍 Gazebo Classic
-
-🦾 MoveIt 2
-
-2. Clone and Build
-   # Create a new ROS 2 workspace
+```bash
+# Create workspace
 mkdir -p ~/arduinobot_ws/src
 cd ~/arduinobot_ws/src
 
-# Clone the repository
-git clone https://github.com/<your-username>/arduinobot.git
+# Clone
+git clone https://github.com/Abhishek-Jumale/arduinobot_ws.git .
 
-# Build the workspace
+# Install dependencies
 cd ~/arduinobot_ws
+rosdep install --from-paths src --ignore-src -r -y
+
+# Build
 colcon build
-
-# Source the setup file
 source install/setup.bash
+```
 
-🧠 Author
+## Usage
 
-Abhishek S. Jumale
+**Launch simulation (Gazebo + RViz):**
+```bash
+ros2 launch arduinobot_bringup simulated_robot.launch.py
+```
 
+**Launch MoveIt 2 motion planning:**
+```bash
+ros2 launch arduinobot_moveit moveit.launch.py
+```
 
+**Launch Alexa voice control:**
+```bash
+ros2 launch arduinobot_remote remote.launch.py
+```
+
+## Technologies
+
+| Component | Technology |
+|-----------|-----------|
+| Middleware | ROS 2 Humble |
+| Simulation | Gazebo Classic |
+| Motion Planning | MoveIt 2 |
+| Visualization | RViz 2 |
+| Robot Model | URDF / Xacro |
+| Controllers | ros2_control |
+| Transforms | TF2 |
+| Hardware | Arduino (Serial) |
+| Voice Control | Amazon Alexa |
+| Languages | Python 3, C++17 |
+| CI/CD | GitHub Actions |
+
+## Author
+
+**Abhishek Surendra Jumale**
+
+- GitHub: [github.com/Abhishek-Jumale](https://github.com/Abhishek-Jumale)
+- LinkedIn: [linkedin.com/in/abhishek-jumale](https://linkedin.com/in/abhishek-jumale)
